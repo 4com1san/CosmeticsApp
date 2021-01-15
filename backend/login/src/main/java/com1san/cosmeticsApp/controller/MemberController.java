@@ -2,6 +2,7 @@ package com1san.cosmeticsApp.controller;
 
 import com1san.cosmeticsApp.domain.Member;
 import com1san.cosmeticsApp.service.MemberService;
+import com1san.cosmeticsApp.web.ChecklistForm;
 import com1san.cosmeticsApp.web.MemberForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -36,5 +37,12 @@ public class MemberController {
     @PostMapping(value="/login")
     public String login(Model model){
         return "logintest";
+
+    }
+    @PostMapping(value="/checklist")
+    public String checklist(@Validated ChecklistForm form){
+        return "redirect;/"; // 임시
+        // memberService.setSkin(로그인멤버id,form.getSkin_cnt());
+        // memberService.setSensitive(로그인멤버id,form.getSkin_cnt());
     }
 }
