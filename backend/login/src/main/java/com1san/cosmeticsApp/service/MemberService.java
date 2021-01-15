@@ -1,6 +1,7 @@
 package com1san.cosmeticsApp.service;
 
 import com1san.cosmeticsApp.domain.Member;
+import com1san.cosmeticsApp.domain.SkinStatus;
 import com1san.cosmeticsApp.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,27 @@ public class MemberService {
     }
     public Member findOne(Long memberId) {
         return memberRepository.findOne(memberId);
+    }
+    // 로그인정보로 member.getid 해서 skin,민감성 넣어줌, 테스트필요
+    public void setSkin(Long memberId,Long skinCnt){
+        if (skinCnt<=1) {
+            memberRepository.findOne(memberId).setSkin_status(SkinStatus.akkun);
+        }
+        else if(skinCnt<=4){
+            memberRepository.findOne(memberId).setSkin_status(SkinStatus.kun);
+        }
+        else if(skinCnt<=7){
+            memberRepository.findOne(memberId).setSkin_status(SkinStatus.joong);
+        }
+        else if(skinCnt<=10){
+            memberRepository.findOne(memberId).setSkin_status(SkinStatus.ji);
+        }
+        else{
+            memberRepository.findOne(memberId).setSkin_status(SkinStatus.akji);
+        }
+    }
+    // 13번 접촉민 14번 화학민 13,14 극민감  둘다안체크는?
+    public void setSensitive(Long memberId,Long sensitiveCnt){
+
     }
 }
