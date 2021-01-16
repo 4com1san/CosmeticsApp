@@ -57,7 +57,7 @@ public class MemberService {
             memberRepository.findOne(memberId).setSkin_status(SkinStatus.akji);
         }
     }
-    // 13번 접촉민 14번 화학민 13,14 극민감  둘다안체크는?
+    // 13번 접촉민 14번 화학민 13,14 극민감  둘다안체크는 non-sensitive
     public void setSensitive(Long memberId,Long sensitiveCnt){
 
     }
