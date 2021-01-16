@@ -24,3 +24,13 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private SensitiveStatus sensitive_status;
 }
+/*
+Name: '' 로그인id
+PW: '' 로그인password
+PWT: '' 비번확인
+EMAIL: '' 이멜(보류)
+NickNAME: '' 닉네임
+list:"지성" 피부타입
+skinBool0,1,2,...:"" boolean으로 피부고민
+api 명세
+ */
