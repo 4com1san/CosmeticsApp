@@ -39,6 +39,14 @@ public class MemberService {
     public Member findOne(Long memberId) {
         return memberRepository.findOne(memberId);
     }
+    /**
+     * 회원 수정
+     */
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
     // 로그인정보로 member.getid 해서 skin,민감성 넣어줌, 테스트필요
     public void setSkin(Long memberId,Long skinCnt){
         if (skinCnt<=1) {
