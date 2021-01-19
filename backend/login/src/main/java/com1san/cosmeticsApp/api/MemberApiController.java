@@ -1,6 +1,7 @@
 package com1san.cosmeticsApp.api;
 
 import com1san.cosmeticsApp.domain.Member;
+import com1san.cosmeticsApp.domain.SkinStatus;
 import com1san.cosmeticsApp.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,7 +33,10 @@ public class MemberApiController {
     }
     @Data
     static class CreateMemberRequest {
+        private String nickname;
         private String name;
+        private Long password;
+
     }
     @Data
     class CreateMemberResponse {
@@ -41,16 +45,20 @@ public class MemberApiController {
             this.id = id;
         }
     }
+    /*
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
                                                @RequestBody @Validated UpdateMemberRequest request) {
-        memberService.update(id, request.getName());
+        memberService.update(id, request.getName(), request.getNickname(), request.getPassword());
         Member findMember = memberService.findOne(id);
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
+    */
     @Data
     static class UpdateMemberRequest {
         private String name;
+        private String nickname;
+        private Long password;
     }
     @Data
     @AllArgsConstructor
@@ -76,6 +84,40 @@ public class MemberApiController {
     @AllArgsConstructor
     class MemberDto {
         private String name;
+    }
+
+    @PostMapping("/api/members")
+    public CreateMemberResponse saveMember(@RequestBody @Validated
+                                                     CreateMemberRequest request) {
+        Member member = new Member();
+        member.setName(request.getName());
+        member.setNickname(request.getNickname());
+        member.setPassword(request.getPassword());
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
+    }
+
+    @PutMapping("/api/members/skin/{id}")
+    public UpdateMemberResponse updateMemberSkin(@PathVariable("id") Long id,
+                                             @RequestBody @Validated UpdateMemberSkinRequest request) {
+        memberService.updateSkin(id, request.getSkin());
+        Member findMember = memberService.findOne(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+    @Data
+    static class UpdateMemberSkinRequest {
+        private SkinStatus skin;
+    }
+    @PutMapping("/api/members/nickname/{id}")
+    public UpdateMemberResponse updateMemberNickname(@PathVariable("id") Long id,
+                                                 @RequestBody @Validated UpdateMemberNicknameRequest request) {
+        memberService.updateNickname(id, request.getNickname());
+        Member findMember = memberService.findOne(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+    @Data
+    static class UpdateMemberNicknameRequest {
+        private String nickname;
     }
 }
 
