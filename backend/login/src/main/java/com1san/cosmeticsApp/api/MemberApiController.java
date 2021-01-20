@@ -85,8 +85,8 @@ public class MemberApiController {
     class MemberDto {
         private String name;
     }
-
-    @PostMapping("/api/members")
+    //회원가입
+    @PostMapping("/api/members/new")
     public CreateMemberResponse saveMember(@RequestBody @Validated
                                                      CreateMemberRequest request) {
         Member member = new Member();
@@ -96,7 +96,7 @@ public class MemberApiController {
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
     }
-
+    //피부타입 수정
     @PutMapping("/api/members/skin/{id}")
     public UpdateMemberResponse updateMemberSkin(@PathVariable("id") Long id,
                                              @RequestBody @Validated UpdateMemberSkinRequest request) {
@@ -108,6 +108,7 @@ public class MemberApiController {
     static class UpdateMemberSkinRequest {
         private SkinStatus skin;
     }
+    //닉네임 수정
     @PutMapping("/api/members/nickname/{id}")
     public UpdateMemberResponse updateMemberNickname(@PathVariable("id") Long id,
                                                  @RequestBody @Validated UpdateMemberNicknameRequest request) {
@@ -118,6 +119,22 @@ public class MemberApiController {
     @Data
     static class UpdateMemberNicknameRequest {
         private String nickname;
+    }
+    //로그인
+    @PostMapping("api/members/login")
+    public LoginResponse login(@RequestBody @Validated LoginRequest request){
+        return new LoginResponse(request.getName(),request.getPassword());
+    }
+    @Data
+    static class LoginRequest{
+        private String name;
+        private Long password;
+    }
+    @Data
+    @AllArgsConstructor
+    class LoginResponse {
+        private String name;
+        private Long password;
     }
 }
 
