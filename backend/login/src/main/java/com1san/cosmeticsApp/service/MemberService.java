@@ -39,6 +39,9 @@ public class MemberService {
     public Member findOne(Long memberId) {
         return memberRepository.findOne(memberId);
     }
+    public List<Member> findByMember(String memberName){
+        return memberRepository.findByName(memberName);
+    }
     /**
      * 회원 수정
      */
@@ -51,6 +54,32 @@ public class MemberService {
     public void updateNickname(Long id, String nickname) {
         Member member = memberRepository.findOne(id);
         member.setNickname(nickname);
+    }
+    @Transactional
+    public void updateSkintrouble(Long id, boolean blackhead,boolean oily,boolean keratin,
+                               boolean pimple,boolean dry,boolean glow,boolean flexibility,
+                               boolean skintone,boolean wrinkle) {
+        Member member = memberRepository.findOne(id);
+        member.setBlackhead(blackhead);
+        member.setOily(oily);
+        member.setKeratin(keratin);
+        member.setPimple(pimple);
+        member.setDry(dry);
+        member.setGlow(glow);
+        member.setFlexibility(flexibility);
+        member.setSkintone(skintone);
+        member.setWrinkle(wrinkle);
+    }
+    @Transactional
+    public void updatePersonal(Long id, Long Sleeping_Hours,Long Wash_Temperature,
+                               Long Wash_Num,String Stress,String Collyrium,String Food) {
+        Member member = memberRepository.findOne(id);
+        member.setSleeping_Hours(Sleeping_Hours);
+        member.setWash_Temperature(Wash_Temperature);
+        member.setWash_Num(Wash_Num);
+        member.setStress(Stress);
+        member.setCollyrium(Collyrium);
+        member.setFood(Food);
     }
     // 로그인정보로 member.getid 해서 skin,민감성 넣어줌, 테스트필요
     public void setSkin(Long memberId,Long skinCnt){
