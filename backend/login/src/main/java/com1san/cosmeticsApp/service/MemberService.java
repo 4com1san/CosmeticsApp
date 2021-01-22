@@ -39,6 +39,7 @@ public class MemberService {
     public Member findOne(Long memberId) {
         return memberRepository.findOne(memberId);
     }
+    @Transactional
     public List<Member> findByMember(String memberName){
         return memberRepository.findByName(memberName);
     }
@@ -56,7 +57,7 @@ public class MemberService {
         member.setNickname(nickname);
     }
     @Transactional
-    public void updateSkintrouble(Long id, boolean blackhead,boolean oily,boolean keratin,
+    public void updateSkinTrouble(Long id, boolean blackhead,boolean oily,boolean keratin,
                                boolean pimple,boolean dry,boolean glow,boolean flexibility,
                                boolean skintone,boolean wrinkle) {
         Member member = memberRepository.findOne(id);
