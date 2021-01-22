@@ -1,48 +1,159 @@
 package com1san.cosmeticsApp.controller;
 
 import com1san.cosmeticsApp.domain.Member;
+import com1san.cosmeticsApp.domain.SkinStatus;
 import com1san.cosmeticsApp.service.MemberService;
-import com1san.cosmeticsApp.web.ChecklistForm;
-import com1san.cosmeticsApp.web.MemberForm;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping(value="/members/new")
-    public String createForm(Model model){
-        model.addAttribute("memberForm", new MemberForm());
-        return "members/createMemberForm";
+    @Data
+    static class CreateMemberRequest {
+        private String nickname;
+        private String name;
+        private Long password;
     }
-    @PostMapping(value="/members/new")
-    public String create(@Validated MemberForm form, BindingResult result){
-        if (result.hasErrors()) {
-            return "members/createMemberForm";
-        }
+    @Data
+    @AllArgsConstructor
+    class CreateMemberResponse {
+        private Long id;
+    }
+    //회원가입
+    @PostMapping("/members/new")
+    public CreateMemberResponse saveMember(@RequestBody @Validated CreateMemberRequest request) {
         Member member = new Member();
-        member.setName(form.getName());
-        member.setPassword(form.getPassword());
-        member.setNickname(form.getNickname());
-        memberService.join(member);
-        return "redirect:/";
+        member.setName(request.getName());
+        member.setPassword(request.getPassword());
+        member.setNickname(request.getNickname());
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
     }
-    @PostMapping(value="/login")
-    public String login(Model model){
-        return "logintest";
-
+    @Data
+    static class UpdateMemberRequest {
+        private String name;
+        private String nickname;
+        private Long password;
     }
-    @PostMapping(value="/checklist")
-    public String checklist(@Validated ChecklistForm form){
-        return "redirect;/"; // 임시
-        // memberService.setSkin(로그인멤버id,form.getSkin_cnt());
-        // memberService.setSensitive(로그인멤버id,form.getSkin_cnt());
+    @Data
+    @AllArgsConstructor
+    class UpdateMemberResponse {
+        private Long id;
     }
+    //피부타입 수정
+    @PostMapping("/members/skin/{id}")
+    public UpdateMemberResponse updateMemberSkin(@PathVariable("id") Long id,
+                                                 @RequestBody @Validated UpdateMemberSkinRequest request) {
+        memberService.updateSkin(id,request.getSkin());
+        return new UpdateMemberResponse(id);
+    }
+    @Data
+    static class UpdateMemberSkinRequest {
+        private SkinStatus skin;
+    }
+    //닉네임 수정
+    @PostMapping("/members/nickname/{id}")
+    public UpdateMemberResponse updateMemberNickname(@PathVariable("id") Long id,
+                                                     @RequestBody @Validated UpdateMemberNicknameRequest request) {
+        memberService.updateNickname(id,request.getNickname());
+        return new UpdateMemberResponse(id);
+    }
+    @Data
+    static class UpdateMemberNicknameRequest {
+        private String nickname;
+    }
+    //피부고민 수정
+    @PostMapping("/members/skinTrouble/{id}")
+    public UpdateMemberResponse updateMemberSkinTrouble(@PathVariable("id") Long id,
+                                                     @RequestBody @Validated UpdateMemberSkinTroubleRequest request) {
+        memberService.updateSkinTrouble(id,request.isBlackhead(),request.isOily(),request.isKeratin(),
+                request.isPimple(),request.isDry(),request.isGlow(),request.isFlexibility(),
+                request.isSkintone(),request.isWrinkle());
+        return new UpdateMemberResponse(id);
+    }
+    @Data
+    static class UpdateMemberSkinTroubleRequest {
+        private boolean blackhead;
+        private boolean oily;
+        private boolean keratin;
+        private boolean pimple;
+        private boolean dry;
+        private boolean glow;
+        private boolean flexibility;
+        private boolean skintone;
+        private boolean wrinkle;
+    }
+    //개인특성 수정
+    @PostMapping("/members/personal/{id}")
+    public UpdateMemberResponse updateMemberPersonal(@PathVariable("id") Long id,
+                                                     @RequestBody @Validated UpdateMemberPersonalRequest request) {
+        memberService.updatePersonal(id,request.getSleeping_Hours(),request.getWash_Temperature(),
+                request.getWash_Num(),request.getStress(),request.getCollyrium(),request.getFood());
+        return new UpdateMemberResponse(id);
+    }
+    @Data
+    static class UpdateMemberPersonalRequest {
+        private Long Sleeping_Hours;
+        private Long Wash_Temperature;
+        private Long Wash_Num;
+        private String Stress;
+        private String Collyrium;
+        private String Food;
+    }
+    //로그인
+    @PostMapping("/members/login")
+    public LoginResponse login(@RequestBody @Validated LoginRequest request){
+        List<Member> findMembers=memberService.findByMember(request.getName());
+        if(findMembers.isEmpty()){
+            return new LoginResponse("false",0L);
+        }
+        else{
+            Member member=findMembers.stream().findAny().get();
+            if(member.getPassword()!= request.getPassword()){ // 비번4자리부터 안됨;
+                return new LoginResponse("false",-1L);
+            }
+            else{
+                return new LoginResponse("true",member.getId());
+            }
+        }
+    }
+    @Data
+    static class LoginRequest{
+        private String name;
+        private Long password;
+    }
+    @Data
+    @AllArgsConstructor
+    class LoginResponse {
+        private String state;
+        private Long id;
+    }
+    /*
+    @GetMapping("/api/v2/members")
+    public MemberApiController.Result membersV2() {
+        List<Member> findMembers = memberService.findMembers();
+        //엔티티 -> DTO 변환
+        List<MemberApiController.MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberApiController.MemberDto(m.getName()))
+                .collect(Collectors.toList());
+        return new MemberApiController.Result(collect);
+    }
+    @Data
+    @AllArgsConstructor
+    class Result<T> {
+        private T data;
+    }
+    @Data
+    @AllArgsConstructor
+    class MemberDto {
+        private String name;
+    }
+    */
 }
