@@ -1,6 +1,7 @@
 package com1san.cosmeticsApp.controller;
 
 import com1san.cosmeticsApp.domain.Member;
+import com1san.cosmeticsApp.domain.SensitiveStatus;
 import com1san.cosmeticsApp.domain.SkinStatus;
 import com1san.cosmeticsApp.service.MemberService;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class MemberController {
     static class CreateMemberRequest {
         private String nickname;
         private String name;
-        private Long password;
+        private String password;
     }
     @Data
     @AllArgsConstructor
@@ -40,7 +41,7 @@ public class MemberController {
     static class UpdateMemberRequest {
         private String name;
         private String nickname;
-        private Long password;
+        private String password;
     }
     @Data
     @AllArgsConstructor
@@ -57,6 +58,17 @@ public class MemberController {
     @Data
     static class UpdateMemberSkinRequest {
         private SkinStatus skin;
+    }
+    //피부민감 수정
+    @PostMapping("/members/sensitive/{id}")
+    public UpdateMemberResponse updateMemberSkin(@PathVariable("id") Long id,
+                                                 @RequestBody @Validated UpdateMemberSensitiveRequest request) {
+        memberService.updateSensitive(id,request.getSensitive());
+        return new UpdateMemberResponse(id);
+    }
+    @Data
+    static class UpdateMemberSensitiveRequest {
+        private SensitiveStatus sensitive;
     }
     //닉네임 수정
     @PostMapping("/members/nickname/{id}")
@@ -100,9 +112,9 @@ public class MemberController {
     }
     @Data
     static class UpdateMemberPersonalRequest {
-        private Long Sleeping_Hours;
-        private Long Wash_Temperature;
-        private Long Wash_Num;
+        private String Sleeping_Hours;
+        private String Wash_Temperature;
+        private String Wash_Num;
         private String Stress;
         private String Collyrium;
         private String Food;
@@ -116,7 +128,7 @@ public class MemberController {
         }
         else{
             Member member=findMembers.stream().findAny().get();
-            if(member.getPassword()!= request.getPassword()){ // 비번4자리부터 안됨;
+            if(!member.getPassword().equals(request.getPassword())){ // 비번4자리부터 안됨;
                 return new LoginResponse("false",-1L);
             }
             else{
@@ -127,7 +139,7 @@ public class MemberController {
     @Data
     static class LoginRequest{
         private String name;
-        private Long password;
+        private String password;
     }
     @Data
     @AllArgsConstructor
