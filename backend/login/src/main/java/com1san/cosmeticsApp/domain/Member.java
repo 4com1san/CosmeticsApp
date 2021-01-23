@@ -14,7 +14,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
     private String name;
-    private Long password;
+    private String password;
     private String nickname;
 
     @Enumerated(EnumType.STRING)
@@ -33,9 +33,9 @@ public class Member {
     private boolean skintone;
     private boolean wrinkle;
     //개인특성
-    private Long Sleeping_Hours;
-    private Long Wash_Temperature;
-    private Long Wash_Num;
+    private String Sleeping_Hours;
+    private String Wash_Temperature;
+    private String Wash_Num;
     private String Stress;
     private String Collyrium;
     private String Food;
