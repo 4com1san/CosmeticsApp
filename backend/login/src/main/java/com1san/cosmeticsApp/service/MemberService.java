@@ -1,6 +1,7 @@
 package com1san.cosmeticsApp.service;
 
 import com1san.cosmeticsApp.domain.Member;
+import com1san.cosmeticsApp.domain.SensitiveStatus;
 import com1san.cosmeticsApp.domain.SkinStatus;
 import com1san.cosmeticsApp.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,11 @@ public class MemberService {
         member.setSkin_status(skin);
     }
     @Transactional
+    public void updateSensitive(Long id, SensitiveStatus sensitive) {
+        Member member = memberRepository.findOne(id);
+        member.setSensitive_status(sensitive);
+    }
+    @Transactional
     public void updateNickname(Long id, String nickname) {
         Member member = memberRepository.findOne(id);
         member.setNickname(nickname);
@@ -72,8 +78,8 @@ public class MemberService {
         member.setWrinkle(wrinkle);
     }
     @Transactional
-    public void updatePersonal(Long id, Long Sleeping_Hours,Long Wash_Temperature,
-                               Long Wash_Num,String Stress,String Collyrium,String Food) {
+    public void updatePersonal(Long id, String Sleeping_Hours,String Wash_Temperature,
+                               String Wash_Num,String Stress,String Collyrium,String Food) {
         Member member = memberRepository.findOne(id);
         member.setSleeping_Hours(Sleeping_Hours);
         member.setWash_Temperature(Wash_Temperature);
