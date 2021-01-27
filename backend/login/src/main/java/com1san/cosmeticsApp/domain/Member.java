@@ -16,6 +16,7 @@ public class Member {
     private String name;
     private String password;
     private String nickname;
+    private String email; // 이메일인증 보류
 
     @Enumerated(EnumType.STRING)
     private SkinStatus skin_status;

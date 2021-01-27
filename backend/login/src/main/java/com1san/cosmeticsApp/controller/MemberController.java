@@ -21,6 +21,7 @@ public class MemberController {
         private String nickname;
         private String name;
         private String password;
+        private String email;
     }
     @Data
     @AllArgsConstructor
@@ -34,6 +35,7 @@ public class MemberController {
         member.setName(request.getName());
         member.setPassword(request.getPassword());
         member.setNickname(request.getNickname());
+        member.setEmail(request.getEmail());
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
     }
