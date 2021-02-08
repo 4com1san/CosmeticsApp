@@ -149,6 +149,27 @@ public class MemberController {
         private String state;
         private Long id;
     }
+    //아이디찾기
+    @PostMapping("/members/findname")
+    public NameResponse findName(@RequestBody @Validated NameRequest request){
+        List<Member> findMembers=memberService.findByEmail(request.getEmail());
+        if(findMembers.isEmpty()){
+            return new NameResponse("없다!");
+        }
+        else{
+            Member member=findMembers.stream().findAny().get();
+            return new NameResponse(member.getName());
+        }
+    }
+    @Data
+    static class NameRequest{
+        private String email;
+    }
+    @Data
+    @AllArgsConstructor
+    class NameResponse {
+        private String name;
+    }
     /*
     @GetMapping("/api/v2/members")
     public MemberApiController.Result membersV2() {
