@@ -130,7 +130,7 @@ public class MemberController {
         }
         else{
             Member member=findMembers.stream().findAny().get();
-            if(!member.getPassword().equals(request.getPassword())){ // 비번4자리부터 안됨;
+            if(!member.getPassword().equals(request.getPassword())){
                 return new LoginResponse("false",-1L);
             }
             else{
@@ -148,6 +148,54 @@ public class MemberController {
     class LoginResponse {
         private String state;
         private Long id;
+    }
+    //아이디찾기
+    @PostMapping("/members/findname")
+    public NameResponse findName(@RequestBody @Validated NameRequest request){
+        List<Member> findMembers=memberService.findByEmail(request.getEmail());
+        if(findMembers.isEmpty()){
+            return new NameResponse("없다!");
+        }
+        else{
+            Member member=findMembers.stream().findAny().get();
+            return new NameResponse(member.getName());
+        }
+    }
+    @Data
+    static class NameRequest{
+        private String email;
+    }
+    @Data
+    @AllArgsConstructor
+    class NameResponse {
+        private String name;
+    }
+    //비번찾기
+    @PostMapping("/members/findpassword")
+    public PasswordResponse findPassword(@RequestBody @Validated PasswordRequest request){
+        List<Member> findMembers=memberService.findByEmail(request.getEmail());
+        if(findMembers.isEmpty()){
+            return new PasswordResponse("맞는 이멜 x");
+        }
+        else{
+            Member member=findMembers.stream().findAny().get();
+            if(!member.getName().equals(request.getName())){
+                return new PasswordResponse("이멜하고 아디 다름");
+            }
+            else{
+                return new PasswordResponse(member.getPassword());
+            }
+        }
+    }
+    @Data
+    static class PasswordRequest{
+        private String email;
+        private String name;
+    }
+    @Data
+    @AllArgsConstructor
+    class PasswordResponse {
+        private String password;
     }
     /*
     @GetMapping("/api/v2/members")

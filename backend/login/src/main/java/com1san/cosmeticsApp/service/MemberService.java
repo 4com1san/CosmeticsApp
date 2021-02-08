@@ -44,6 +44,10 @@ public class MemberService {
     public List<Member> findByMember(String memberName){
         return memberRepository.findByName(memberName);
     }
+    @Transactional
+    public List<Member> findByEmail(String email){
+        return memberRepository.findByEmail(email);
+    }
     /**
      * 회원 수정
      */
