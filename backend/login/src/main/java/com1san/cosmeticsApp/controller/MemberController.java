@@ -197,7 +197,50 @@ public class MemberController {
     class PasswordResponse {
         private String password;
     }
+    //Get 요청1
+    @GetMapping("/members/information_1/{id}")
+    public Info_1_Response information_1(@PathVariable("id") Long id) {
+        Member member = memberService.findOne(id);
+        return new Info_1_Response(member.getNickname(),member.getSkin_status(),member.getSkintype(),
+                member.getSleeping_Hours(),member.getWash_Temperature(),member.getWash_Num(),
+                member.getStress(),member.getCollyrium(),member.getFood());
+    }
+    @Data
+    @AllArgsConstructor
+    class Info_1_Response {
+        private String nickname;
+        private SkinStatus skin_status;
+        private List skintype; // 피부고민 true인것만 보내줘
+        private String Sleeping_Hours;
+        private String Wash_Temperature;
+        private String Wash_Num;
+        private String Stress;
+        private String Collyrium;
+        private String Food;
+    }
+    //Get 요청2
+    @GetMapping("/members/information_2/{id}")
+    public Info_2_Response information_2(@PathVariable("id") Long id) {
+        Member member = memberService.findOne(id);
+        return new Info_2_Response(member.getName(),member.getNickname(),member.getSleeping_Hours(),
+                member.getWash_Temperature(),member.getWash_Num(),member.getStress(),
+                member.getCollyrium(),member.getFood());
+    }
+    @Data
+    @AllArgsConstructor
+    class Info_2_Response {
+        private String name;
+        private String nickname;
+        private String Sleeping_Hours;
+        private String Wash_Temperature;
+        private String Wash_Num;
+        private String Stress;
+        private String Collyrium;
+        private String Food;
+    }
     /*
+    닉네임 피부타입 피부고민 수면시간 세안온도 세안횟수 스트레스 세안제종류 음식
+    아이디 닉네임 수면시간 세안온도 세안횟수 스트레스 세안제종류 음식
     @GetMapping("/api/v2/members")
     public MemberApiController.Result membersV2() {
         List<Member> findMembers = memberService.findMembers();

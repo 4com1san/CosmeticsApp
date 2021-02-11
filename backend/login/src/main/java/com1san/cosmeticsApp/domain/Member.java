@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +26,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private SensitiveStatus sensitive_status;
     //피부고민 엔티티 나눠야하나?
+    private ArrayList<String> skintype=new ArrayList<String>();
+    /*
     private boolean blackhead;
     private boolean oily;
     private boolean keratin;
@@ -33,12 +37,13 @@ public class Member {
     private boolean flexibility;
     private boolean skintone;
     private boolean wrinkle;
+    */
     //개인특성
     private String Sleeping_Hours;
     private String Wash_Temperature;
     private String Wash_Num;
     private String Stress;
-    private String Collyrium;
+    private String Collyrium; // 세안제종류
     private String Food;
 }
 /*

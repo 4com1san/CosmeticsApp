@@ -71,6 +71,7 @@ public class MemberService {
                                boolean pimple,boolean dry,boolean glow,boolean flexibility,
                                boolean skintone,boolean wrinkle) {
         Member member = memberRepository.findOne(id);
+        /*
         member.setBlackhead(blackhead);
         member.setOily(oily);
         member.setKeratin(keratin);
@@ -80,6 +81,34 @@ public class MemberService {
         member.setFlexibility(flexibility);
         member.setSkintone(skintone);
         member.setWrinkle(wrinkle);
+        */
+        if(blackhead) {
+            member.getSkintype().add("blackhead");
+        }
+        if(oily) {
+            member.getSkintype().add("oily");
+        }
+        if(keratin) {
+            member.getSkintype().add("keratin");
+        }
+        if(pimple) {
+            member.getSkintype().add("pimple");
+        }
+        if(dry) {
+            member.getSkintype().add("dry");
+        }
+        if(glow) {
+            member.getSkintype().add("glow");
+        }
+        if(flexibility) {
+            member.getSkintype().add("flexibility");
+        }
+        if(skintone) {
+            member.getSkintype().add("skintone");
+        }
+        if(wrinkle) {
+            member.getSkintype().add("wrinkle");
+        }
     }
     @Transactional
     public void updatePersonal(Long id, String Sleeping_Hours,String Wash_Temperature,
