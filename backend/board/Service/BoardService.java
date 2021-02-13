@@ -6,8 +6,6 @@ import cosmetics.demo.Domain.Entity.Member.MemberEntity;
 import cosmetics.demo.Domain.Repository.BoardRepository;
 import cosmetics.demo.Domain.Repository.MemberRepository;
 import cosmetics.demo.dto.BoardDto;
-import cosmetics.demo.dto.CommentDto;
-import cosmetics.demo.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,22 +25,26 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
 
-    public List<BoardDto> getBoardlist() {
-        List<BoardEntity> boardEntities = boardRepository.findAll();
-        List<BoardDto> boardDtoList = new ArrayList<>();
+    // 카테고리별 게시글 목록 //
+    public Page<BoardDto> Boardlist(Category category, Pageable pageable) {
+        Page<BoardEntity> entityPage = boardRepository.findBoardEntitiesByCategory(category, pageable);
+        //page<entity> -> page<Dto>
+        return entityPage.map(BoardDto::new);
 
-        boardEntities.stream().forEach(boardEntity -> {
-            boardDtoList.add(new BoardDto(boardEntity));
-        });
-
-        return boardDtoList;
     }
 
+    //<수정>//
     @Transactional
-    public Long getBoardCount() {
-        return boardRepository.count();
-    }
+    public BoardDto addLikeAndHOT(Long id){
+        BoardEntity boardEntity = boardRepository.findById(id).get();
+        BoardDto boardDto = new BoardDto(boardEntity);
+        boardDto.setLike(boardDto.getLike()+1);
 
+        if(boardDto.getLike()>=10){
+            boardDto.setHot(true);
+        }
+        return boardDto;
+    }
 
     public BoardDto getPost(Long id) {
         Optional<BoardEntity> boardEntityWrapper = boardRepository.findById(id);
@@ -52,7 +54,7 @@ public class BoardService {
     }
 
     @Transactional
-    public Long savePost(Long memberId, BoardDto boardDto) {
+    public Long savePost(Long memberId, Category category, BoardDto boardDto) {
         MemberEntity findMember = memberRepository.findOne(memberId);
 
         BoardEntity board = BoardEntity.builder()
@@ -60,17 +62,20 @@ public class BoardService {
                 .title(boardDto.getTitle())
                 .content(boardDto.getContent())
                 .viewcnt(boardDto.getViewcnt())
-                .category(boardDto.getCategory())
                 .build();
 
+        board.setCategory(category);
         board.setMember(findMember);
+
         return boardRepository.save(board).getId();
     }
+    //<수정>//
     @Transactional
-    public Long addViews(BoardDto boardDto){
-        int view = boardDto.getViewcnt();
-        boardDto.setViewcnt(view+1);
-        return boardRepository.save(boardDto.toEntity()).getId();
+    public Long addViews(Long id, BoardDto boardDto){
+        BoardEntity boardEntity = boardRepository.findById(id).get();
+        boardEntity.updateView(boardEntity.getViewcnt()+1);
+
+        return boardEntity.getId();
     }
 
     @Transactional
@@ -111,15 +116,13 @@ public class BoardService {
         return boardDto;
     }
 
-    //== 카테고리별 페이징==//
-    public List<BoardDto> categoryPage(Category category, Pageable page){
-        Page<BoardEntity> categories = boardRepository.findByCategory(category, page);
-        List<BoardEntity> contents = categories.getContent();
-        List<BoardDto> boardDtos = contents.stream()
+    public List<BoardDto> searchPostsByCategory(String keyword, Category category, Pageable pageable) {
+        List<BoardEntity> content = boardRepository.findBoardEntitiesByCategoryAndTitleContaining(keyword, category, pageable).getContent();
+
+        List<BoardDto> collect = content.stream()
                 .map(o -> new BoardDto(o))
                 .collect(Collectors.toList());
 
-        return boardDtos;
+        return collect;
     }
-
 }
