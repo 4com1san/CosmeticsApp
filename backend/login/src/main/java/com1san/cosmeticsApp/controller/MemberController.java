@@ -59,7 +59,7 @@ public class MemberController {
     }
     @Data
     static class UpdateMemberSkinRequest {
-        private SkinStatus skin;
+        private String skin;
     }
     //피부민감 수정
     @PostMapping("/members/sensitive/{id}")
@@ -70,7 +70,7 @@ public class MemberController {
     }
     @Data
     static class UpdateMemberSensitiveRequest {
-        private SensitiveStatus sensitive;
+        private String sensitive;
     }
     //닉네임 수정
     @PostMapping("/members/nickname/{id}")
@@ -114,12 +114,12 @@ public class MemberController {
     }
     @Data
     static class UpdateMemberPersonalRequest {
-        private String Sleeping_Hours;
-        private String Wash_Temperature;
-        private String Wash_Num;
-        private String Stress;
-        private String Collyrium;
-        private String Food;
+        private String sleeping_Hours;
+        private String wash_Temperature;
+        private String wash_Num;
+        private String stress;
+        private String collyrium;
+        private String food;
     }
     //로그인
     @PostMapping("/members/login")
@@ -209,7 +209,7 @@ public class MemberController {
     @AllArgsConstructor
     class Info_1_Response {
         private String nickname;
-        private SkinStatus skin_status;
+        private String skin_status;
         private List skintype; // 피부고민 true인것만 보내줘
         private String Sleeping_Hours;
         private String Wash_Temperature;
