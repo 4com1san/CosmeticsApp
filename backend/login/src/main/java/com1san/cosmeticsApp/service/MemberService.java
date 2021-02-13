@@ -52,12 +52,12 @@ public class MemberService {
      * 회원 수정
      */
     @Transactional
-    public void updateSkin(Long id, SkinStatus skin) {
+    public void updateSkin(Long id, String skin) {
         Member member = memberRepository.findOne(id);
         member.setSkin_status(skin);
     }
     @Transactional
-    public void updateSensitive(Long id, SensitiveStatus sensitive) {
+    public void updateSensitive(Long id, String sensitive) {
         Member member = memberRepository.findOne(id);
         member.setSensitive_status(sensitive);
     }
@@ -120,27 +120,5 @@ public class MemberService {
         member.setStress(Stress);
         member.setCollyrium(Collyrium);
         member.setFood(Food);
-    }
-    // 로그인정보로 member.getid 해서 skin,민감성 넣어줌, 테스트필요
-    public void setSkin(Long memberId,Long skinCnt){
-        if (skinCnt<=1) {
-            memberRepository.findOne(memberId).setSkin_status(SkinStatus.akkun);
-        }
-        else if(skinCnt<=4){
-            memberRepository.findOne(memberId).setSkin_status(SkinStatus.kun);
-        }
-        else if(skinCnt<=7){
-            memberRepository.findOne(memberId).setSkin_status(SkinStatus.joong);
-        }
-        else if(skinCnt<=10){
-            memberRepository.findOne(memberId).setSkin_status(SkinStatus.ji);
-        }
-        else{
-            memberRepository.findOne(memberId).setSkin_status(SkinStatus.akji);
-        }
-    }
-    // 13번 접촉민 14번 화학민 13,14 극민감  둘다안체크는 non-sensitive
-    public void setSensitive(Long memberId,Long sensitiveCnt){
-
     }
 }

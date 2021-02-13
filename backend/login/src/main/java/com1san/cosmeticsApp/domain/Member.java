@@ -20,11 +20,8 @@ public class Member {
     private String nickname;
     private String email; // 이메일인증 보류
 
-    @Enumerated(EnumType.STRING)
-    private SkinStatus skin_status;
-
-    @Enumerated(EnumType.STRING)
-    private SensitiveStatus sensitive_status;
+    private String skin_status;
+    private String sensitive_status;
     //피부고민 엔티티 나눠야하나?
     private ArrayList<String> skintype=new ArrayList<String>();
     /*
@@ -39,12 +36,12 @@ public class Member {
     private boolean wrinkle;
     */
     //개인특성
-    private String Sleeping_Hours;
-    private String Wash_Temperature;
-    private String Wash_Num;
-    private String Stress;
-    private String Collyrium; // 세안제종류
-    private String Food;
+    private String sleeping_Hours;
+    private String wash_Temperature;
+    private String wash_Num;
+    private String stress;
+    private String collyrium; // 세안제종류
+    private String food;
 }
 /*
 Name: '' 로그인id
