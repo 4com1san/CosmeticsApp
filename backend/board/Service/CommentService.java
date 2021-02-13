@@ -12,6 +12,8 @@ import cosmetics.demo.dto.MemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +32,8 @@ public class CommentService {
     private final BoardRepository boardRepository;
 
     //==댓글 조회==//
-    public List<CommentDto> CommentsAll(){
-        List<CommentEntity> comments = commentRepository.findAll();
+    public List<CommentDto> CommentsAll(Long boardId, Pageable pageable){
+        List<CommentEntity> comments = commentRepository.findCommentEntityByBoardEntity_Id(boardId, pageable).getContent();
 
         List<CommentDto> commentsDto = new ArrayList<>();
 
