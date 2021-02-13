@@ -1,82 +1,122 @@
-package cosmetics.demo.Controller;
+package cosmetics.demo.Service;
 
 import cosmetics.demo.Domain.Entity.BoardEntity;
-import cosmetics.demo.Service.BoardService;
+import cosmetics.demo.Domain.Entity.Category;
+import cosmetics.demo.Domain.Entity.Member.MemberEntity;
+import cosmetics.demo.Domain.Repository.BoardRepository;
+import cosmetics.demo.Domain.Repository.MemberRepository;
 import cosmetics.demo.dto.BoardDto;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@RestController
-public class BoardController {
-    private final BoardService boardService;
+@Transactional(readOnly = true)
+@Service
+public class BoardService {
 
-    /* 게시글 목록 */
-    @GetMapping("/board/list")
-    public ResponseList list() {
-        List<BoardDto> boardList = boardService.getBoardlist();
+    private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
-        return new ResponseList(boardList.size(), boardList);
-    }
-    @Data
-    @AllArgsConstructor
-    static class ResponseList<T>{
-        private int boardCnt;
-        private T data;
+    // 카테고리별 게시글 목록 //
+    public Page<BoardDto> Boardlist(Category category, Pageable pageable) {
+        Page<BoardEntity> entityPage = boardRepository.findBoardEntitiesByCategory(category, pageable);
+        //page<entity> -> page<Dto>
+        return entityPage.map(BoardDto::new);
+
     }
 
-    /* 게시글 상세 */
-    @GetMapping("/board/{no}")
-    public BoardDto detail(@PathVariable("no") Long no) {
-        BoardDto boardDTO = boardService.getPost(no);
-        boardService.addViews(boardDTO);
+    //<수정>//
+    @Transactional
+    public BoardDto addLikeAndHOT(Long id){
+        BoardEntity boardEntity = boardRepository.findById(id).get();
+        BoardDto boardDto = new BoardDto(boardEntity);
+        boardDto.setLike(boardDto.getLike()+1);
 
-        return boardDTO;
-    }
-
-    /* 게시글 쓰기 */
-    @PostMapping("/board/post")
-    public BoardDto write(@RequestParam("memberId") Long memberId, @RequestBody @Valid BoardDto boardDto) {
-        boardDto.setViewcnt(0);
-        boardService.savePost(memberId, boardDto);
-
+        if(boardDto.getLike()>=10){
+            boardDto.setHot(true);
+        }
         return boardDto;
     }
 
-    /* 게시글 수정 */
-    @GetMapping("/board/post/edit/{no}")
-    public BoardDto edit(@PathVariable("no") Long no) {
-        BoardDto boardDTO = boardService.getPost(no);
+    public BoardDto getPost(Long id) {
+        Optional<BoardEntity> boardEntityWrapper = boardRepository.findById(id);
+        BoardEntity boardEntity = boardEntityWrapper.get();
 
-        return boardDTO;
+        return new BoardDto(boardEntity);
     }
 
-    @PutMapping("/board/post/edit/{no}")
-    public BoardDto boardUpdate(@PathVariable("no") Long no, @RequestBody @Valid BoardDto boardDTO) {
-        BoardDto boardDto = boardService.updatePost(no, boardDTO);
-        return boardDto;
+    @Transactional
+    public Long savePost(Long memberId, Category category, BoardDto boardDto) {
+        MemberEntity findMember = memberRepository.findOne(memberId);
+
+        BoardEntity board = BoardEntity.builder()
+                .id(boardDto.getId())
+                .title(boardDto.getTitle())
+                .content(boardDto.getContent())
+                .viewcnt(boardDto.getViewcnt())
+                .build();
+
+        board.setCategory(category);
+        board.setMember(findMember);
+
+        return boardRepository.save(board).getId();
+    }
+    //<수정>//
+    @Transactional
+    public BoardDto addViews(Long id){
+        BoardEntity boardEntity = boardRepository.findById(id).get();
+        boardEntity.updateView(boardEntity.getViewcnt()+1);
+
+        return new BoardDto(boardEntity);
     }
 
-    /* 게시글 삭제 */
-    @DeleteMapping("/board/delete/{no}")
-    public void delete(@RequestParam("memberId") Long memberId, @PathVariable("no") Long no) {
-        boardService.deletePost(memberId, no);
+    @Transactional
+    public void deletePost(Long memberId, Long boardId) {
+        boardRepository.deleteById(boardId);
+        MemberEntity findMember = memberRepository.findOne(memberId);
+        List<BoardEntity> findBoards = boardRepository.findByMemberEntityId(memberId);
+        findMember.setBoards(findBoards);
     }
 
-    /* 검색 */
-    @GetMapping("/board/search")
-    public ResponseList search(@RequestParam(value="keyword") String keyword) {
-        List<BoardDto> boardDtoList = boardService.searchPosts(keyword);
+    //==게시글 찾기==//
+    public Page<BoardDto> searchPosts(String keyword, Pageable pageable) {
+        Page<BoardEntity> byTitleContaining = boardRepository.findByTitleContaining(keyword, pageable);
+        if (byTitleContaining.isEmpty()) return null;
 
-        return new ResponseList(boardDtoList.size(), boardDtoList);
+        Page<BoardDto> boardDtos = byTitleContaining.map(BoardDto::new);
+
+        return boardDtos;
+    }
+
+    //==게시글 업뎃==//
+    @Transactional
+    public BoardDto updatePost(Long id, Long memberId, BoardDto board){
+        MemberEntity findMember = memberRepository.findOne(memberId);
+        BoardEntity boardEntity = boardRepository.findById(id).get();
+
+        List<BoardEntity> boards = findMember.getBoards();
+
+        if(boards.contains(boardEntity)){
+            boardEntity.updateBoard(board);
+        }
+
+        return new BoardDto(boardEntity);
+
+    }
+
+    public Page<BoardDto> searchPostsByCategory(String keyword, Category category, Pageable pageable) {
+        Page<BoardEntity> content = boardRepository.findBoardEntitiesByCategoryAndTitleContaining(keyword, category, pageable);
+
+        Page<BoardDto> collect = content.map(BoardDto::new);
+
+        return collect;
     }
 }
-
