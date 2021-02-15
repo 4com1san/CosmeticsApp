@@ -83,31 +83,31 @@ public class MemberService {
         member.setWrinkle(wrinkle);
         */
         if(blackhead) {
-            member.getSkintype().add("blackhead");
+            member.getSkintype().add("블랙헤드");
         }
         if(oily) {
-            member.getSkintype().add("oily");
+            member.getSkintype().add("기름짐");
         }
         if(keratin) {
-            member.getSkintype().add("keratin");
+            member.getSkintype().add("각질,모공");
         }
         if(pimple) {
-            member.getSkintype().add("pimple");
+            member.getSkintype().add("여드름");
         }
         if(dry) {
-            member.getSkintype().add("dry");
+            member.getSkintype().add("건조,당김");
         }
         if(glow) {
-            member.getSkintype().add("glow");
+            member.getSkintype().add("홍조");
         }
         if(flexibility) {
-            member.getSkintype().add("flexibility");
+            member.getSkintype().add("처짐,탄력");
         }
         if(skintone) {
-            member.getSkintype().add("skintone");
+            member.getSkintype().add("피부톤");
         }
         if(wrinkle) {
-            member.getSkintype().add("wrinkle");
+            member.getSkintype().add("주름");
         }
     }
     @Transactional
