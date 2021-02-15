@@ -201,7 +201,7 @@ public class MemberController {
     @GetMapping("/members/information_1/{id}")
     public Info_1_Response information_1(@PathVariable("id") Long id) {
         Member member = memberService.findOne(id);
-        return new Info_1_Response(member.getNickname(),member.getSkin_status(),member.getSkintype(),
+        return new Info_1_Response(member.getNickname(),member.getSkin_status(),member.getSensitive_status(),member.getSkintype(),
                 member.getSleeping_Hours(),member.getWash_Temperature(),member.getWash_Num(),
                 member.getStress(),member.getCollyrium(),member.getFood());
     }
@@ -210,6 +210,7 @@ public class MemberController {
     class Info_1_Response {
         private String nickname;
         private String skin_status;
+        private String sensitive_status;
         private List skintype; // 피부고민 true인것만 보내줘
         private String Sleeping_Hours;
         private String Wash_Temperature;
