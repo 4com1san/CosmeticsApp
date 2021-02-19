@@ -121,4 +121,9 @@ public class MemberService {
         member.setCollyrium(Collyrium);
         member.setFood(Food);
     }
+    @Transactional
+    public void updatePassword(Long id, String password) {
+        Member member = memberRepository.findOne(id);
+        member.setPassword(password);
+    }
 }
