@@ -121,6 +121,36 @@ public class MemberController {
         private String collyrium;
         private String food;
     }
+    //비밀번호 수정
+    @PostMapping("/members/password/{id}")
+    public UpdatePasswordResponse updateMemberPassword(@PathVariable("id") Long id,
+                                                     @RequestBody @Validated UpdateMemberPasswordRequest request) {
+        Member member=memberService.findOne(id);
+        if(!member.getPassword().equals(request.getCurrentpw())){
+            return new UpdatePasswordResponse("현재 비밀번호가 틀립니다",-1L);
+        }
+        else{
+            if(member.getPassword().equals(request.getUpdatepw())) {
+                return new UpdatePasswordResponse("현재 비밀번호와 같습니다", -1L);
+            }
+            else{
+                memberService.updatePassword(id,request.getUpdatepw());
+                return new UpdatePasswordResponse("성공",id);
+            }
+        }
+
+    }
+    @Data
+    static class UpdateMemberPasswordRequest {
+        private String currentpw;
+        private String updatepw;
+    }
+    @Data
+    @AllArgsConstructor
+    class UpdatePasswordResponse {
+        private String state;
+        private Long id;
+    }
     //로그인
     @PostMapping("/members/login")
     public LoginResponse login(@RequestBody @Validated LoginRequest request){
